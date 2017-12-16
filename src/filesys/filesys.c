@@ -153,44 +153,43 @@ do_format (void)
 }
 
 static void
-filename_tokenize(const char *path,
-    char *directory, char *filename)
-{
-  int l = strlen(path);
-  char *s = (char*) malloc( sizeof(char) * (l + 1) );
-  memcpy (s, path, sizeof(char) * (l + 1));
+filename_tokenize(const char *path, char *directory, char *filename)
+{  
+  int path_length = path_length = strlen(path);
+  int filename_length = path_length;
 
-  char *empty = "";
-  if (!strcmp(path, empty))
+  char *path_temp = (char*) malloc(sizeof(char) * (strlen(path)+1));
+  memcpy (path_temp, path, sizeof(char) * (strlen(path)+1));
+
+  if (!strcmp(path, (char *)""))
   {
-    *directory = "";
-    *filename = "";
+    *directory = '\0';
+    *filename = '\0';
     return;
   }
 
-  char *dir = directory;
-  if(l > 0 && path[0] == '/') {
-    if(dir) *dir++ = '/';
-  }
-
-  char *token, *p, *last_token = "";
-  for (token = strtok_r(s, "/", &p); token != NULL;
-       token = strtok_r(NULL, "/", &p))
+  if (!strcmp(path, (char *)"/"))
   {
-    int tl = strlen (last_token);
-    if (dir && tl > 0) {
-      memcpy (dir, last_token, sizeof(char) * tl);
-      dir[tl] = '/';
-      dir += tl + 1;
-    }
-
-    last_token = token;
+    char *directory_pos = directory;
+    *directory_pos++ = '/';
+    *directory_pos = '\0';
+    *filename = '\0';
+    return;
   }
 
-  if(dir) *dir = '\0';
-  memcpy (filename, last_token, sizeof(char) * (strlen(last_token) + 1));
-  free (s);
+  char *token, *save_ptr;
+  for (token = strtok_r(path_temp, "/", &save_ptr); token != NULL;
+       token = strtok_r(NULL, "/", &save_ptr))
+  {
+    filename_length = strlen (token);
+  }
 
+  strlcpy(directory, path, path_length - filename_length + 1);
+  char *end_char = "\0";
+  strlcat(directory, end_char, (sizeof *end_char));
+  strlcpy(filename, path + path_length - filename_length, filename_length + 2);
+
+  return;
 }
 
 /*------------- SYSTEM CALL helper function ----------------*/
