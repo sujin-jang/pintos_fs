@@ -138,6 +138,15 @@ start_process (void *f_name)
   if_.esp -= sizeof(void(*)(void));
     // No need to copy 0 value. Stack already initailized by 0
 
+  /* Set up CWD */
+   if (thread_current()->parent != NULL && thread_current()->parent->cwd != NULL) {
+     // child process inherits the CWD
+     thread_current()->cwd = dir_reopen(thread_current()->parent->cwd);
+   }
+   else {
+     thread_current()->cwd = dir_open_root();
+   }
+
   palloc_free_page (file_name);
   palloc_free_page (argv);
   sema_up(thread_current()->process_sema);
@@ -415,7 +424,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
         }
     }
 
-  t->cwd = dir_open_root();
+  //t->cwd = dir_open_root();
 
   /* Set up stack. */
   if (!setup_stack (esp))

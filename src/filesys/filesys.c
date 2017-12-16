@@ -72,11 +72,6 @@ filesys_create (const char *path, off_t initial_size, bool is_dir)
     free_map_release (inode_sector, 1);
   dir_close (dir);
 
-  if (dir_get_inode (dir)==NULL)
-  {
-    //printf("!!!!!!!! inode is null\n");
-  }
-
   //printf("filesys create return %d\n", success);
   return success;
 }

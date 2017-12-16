@@ -310,10 +310,16 @@ syscall_exit (int status)
 static bool
 syscall_create (char *file, off_t initial_size)
 {
+  //printf("system call create %s\n", file);
   if (!strcmp(file, (char *)""))
     return false;
-  //printf("system call create %s\n", file);
-  return filesys_create (file, initial_size, false);
+
+  bool result;
+  lock_acquire(&lock_file);
+  result = filesys_create (file, initial_size, false);
+  lock_release(&lock_file);
+  
+  return result;
 }
 
 static int
@@ -483,7 +489,7 @@ syscall_mkdir(const char *file)
   //("mkdir call\n");
   if (!strcmp(file, (char *)""))
     return false;
-  
+
   bool return_code;
 
   lock_acquire (&lock_file);
