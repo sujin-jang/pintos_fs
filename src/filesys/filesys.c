@@ -84,36 +84,33 @@ filesys_open (const char *name)
   //struct dir *dir = dir_open_root ();
   //printf("filesys open %s\n", name);
 
-  char *directory = malloc(sizeof(char) * strlen(name));
-  char *file_name = malloc(sizeof(char) * strlen(name));
-  filename_tokenize(name, directory, file_name);
+  char *token_dir = malloc(sizeof(char) * strlen(name));
+  char *token_file = malloc(sizeof(char) * strlen(name));
+  filename_tokenize(name, token_dir, token_file);
   //printf("directory: %s, filename: %s\n", directory, file_name);
 
-  struct dir *dir = dir_open_path (directory);
+  struct dir *dir = dir_open_path (token_dir);
   struct inode *inode = NULL;
-  if (dir == NULL)
-  {
-    //printf("open path: null\n");
-    return NULL;
-  }
 
-  if (strlen(file_name) > 0)
+  if (dir != NULL)
   {
-    //printf("lets dir lookup2\n");
-    dir_lookup (dir, file_name, &inode);
-    dir_close (dir);
-  }
-  else { // empty filename : just return the directory
-    inode = dir_get_inode (dir);
-  }
+    if (strlen(token_file) > 0)
+    {
+      //printf("lets dir lookup2\n");
+      dir_lookup (dir, token_file, &inode);
+      dir_close (dir);
+    } else {
+      inode = dir_get_inode (dir);
+    }
 
-  if (inode == NULL || inode_is_removed (inode))
-  {
-    //printf("filesys open inode null\n");
-    return NULL;
+    if (inode == NULL) 
+      return NULL;
+    if(inode_is_removed (inode))
+      return NULL;
+  
+    return file_open (inode);
   }
-
-  return file_open (inode);
+  return NULL;
 }
 
 /* Deletes the file named NAME.
