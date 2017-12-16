@@ -310,13 +310,16 @@ syscall_exit (int status)
 static bool
 syscall_create (char *file, off_t initial_size)
 {
+  if (!strcmp(file, (char *)""))
+    return false;
+  //printf("system call create %s\n", file);
   return filesys_create (file, initial_size, false);
 }
 
 static int
 syscall_open (char *file)
 {
-  //printf("open %s\n", file);
+  //printf("system call open %s\n", file);
   char *empty = "";
   if (!strcmp(file, empty))
     return -1;
@@ -414,6 +417,8 @@ syscall_write (int fd, void *buffer, unsigned size)
 static bool
 syscall_remove (const char *file)
 {
+  //printf("remove call\n");
+
   lock_acquire(&lock_file);
   bool result = filesys_remove (file);
   lock_release(&lock_file);
@@ -461,18 +466,24 @@ syscall_tell (int fd)
 static bool
 syscall_chdir(const char *file)
 {
+  //printf("chdir call\n");
   bool return_code;
 
   lock_acquire (&lock_file);
   return_code = filesys_chdir(file);
   lock_release (&lock_file);
 
+  //printf("chdir call finish\n");
   return return_code;
 }
 
 static bool
 syscall_mkdir(const char *file)
 {
+  //("mkdir call\n");
+  if (!strcmp(file, (char *)""))
+    return false;
+  
   bool return_code;
 
   lock_acquire (&lock_file);

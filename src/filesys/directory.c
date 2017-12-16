@@ -28,7 +28,23 @@ struct dir_entry
 bool
 dir_create (disk_sector_t sector, size_t entry_cnt) 
 {
-  return inode_create (sector, entry_cnt * sizeof (struct dir_entry), true);
+  //return inode_create (sector, entry_cnt * sizeof (struct dir_entry), true);
+  bool success = true;
+  success = inode_create (sector, entry_cnt * sizeof (struct dir_entry), /*is_dir*/ true);
+  if(!success) return false;
+ 
+  // The first (offset 0) dir entry is for parent directory; do self-referencing
+  // Actual parent directory will be set on execution of dir_add()
+  struct dir *dir = dir_open( inode_open(sector) );
+  ASSERT (dir != NULL);
+  struct dir_entry e;
+  e.inode_sector = sector;
+  if (inode_write_at(dir->inode, &e, sizeof e, 0) != sizeof e) {
+    success = false;
+  }
+  dir_close (dir);
+ 
+  return success;
 }
 
 /* Opens and returns the directory for the given INODE, of which
@@ -40,7 +56,7 @@ dir_open (struct inode *inode)
   if (inode != NULL && dir != NULL)
     {
       dir->inode = inode;
-      dir->pos = 0;
+      dir->pos = sizeof (struct dir_entry);
       return dir;
     }
   else
@@ -100,7 +116,7 @@ lookup (const struct dir *dir, const char *name,
   ASSERT (dir != NULL);
   ASSERT (name != NULL);
 
-  for (ofs = 0; inode_read_at (dir->inode, &e, sizeof e, ofs) == sizeof e;
+  for (ofs = sizeof e; inode_read_at (dir->inode, &e, sizeof e, ofs) == sizeof e;
        ofs += sizeof e) 
     if (e.in_use && !strcmp (name, e.name)) 
       {
@@ -131,14 +147,20 @@ dir_lookup (const struct dir *dir, const char *name,
     *inode = inode_reopen (dir->inode);
   }
   else if (strcmp (name, "..") == 0) {
+    // printf("dir lookup: goto parent directory\n");
     // parent directory : the information is stored at the first (0-pos) entry.
     inode_read_at (dir->inode, &e, sizeof e, 0);
     *inode = inode_open (e.inode_sector);
   }
   else if (lookup (dir, name, &e, NULL))
+  {
     *inode = inode_open (e.inode_sector);
+  }
   else
+  {
+    //printf("cannot find\n");
     *inode = NULL;
+  }
 
   return *inode != NULL;
 }
@@ -150,8 +172,9 @@ dir_lookup (const struct dir *dir, const char *name,
    Fails if NAME is invalid (i.e. too long) or a disk or memory
    error occurs. */
 bool
-dir_add (struct dir *dir, const char *name, disk_sector_t inode_sector) 
+dir_add (struct dir *dir, const char *name, disk_sector_t inode_sector, bool is_dir) 
 {
+  //printf("dir add call - name: %s, is_dir: %d\n", name, is_dir);
   struct dir_entry e;
   off_t ofs;
   bool success = false;
@@ -167,6 +190,20 @@ dir_add (struct dir *dir, const char *name, disk_sector_t inode_sector)
   if (lookup (dir, name, NULL, NULL))
     goto done;
 
+  
+  if (is_dir)
+   {
+     struct dir *child_dir = dir_open( inode_open(inode_sector) );
+     if(child_dir == NULL) goto done;
+     e.inode_sector = inode_get_inumber( dir_get_inode(dir) );
+     if (inode_write_at(child_dir->inode, &e, sizeof e, 0) != sizeof e) {
+       dir_close (child_dir);
+       goto done;
+     }
+     dir_close (child_dir);
+   }
+   
+
   /* Set OFS to offset of free slot.
      If there are no free slots, then it will be set to the
      current end-of-file.
@@ -174,7 +211,7 @@ dir_add (struct dir *dir, const char *name, disk_sector_t inode_sector)
      inode_read_at() will only return a short read at end of file.
      Otherwise, we'd need to verify that we didn't get a short
      read due to something intermittent such as low memory. */
-  for (ofs = 0; inode_read_at (dir->inode, &e, sizeof e, ofs) == sizeof e;
+  for (ofs = sizeof e; inode_read_at (dir->inode, &e, sizeof e, ofs) == sizeof e;
        ofs += sizeof e) 
     if (!e.in_use)
       break;
@@ -186,6 +223,7 @@ dir_add (struct dir *dir, const char *name, disk_sector_t inode_sector)
   success = inode_write_at (dir->inode, &e, sizeof e, ofs) == sizeof e;
 
  done:
+  //printf("dir add result: %d\n", success);
   return success;
 }
 
@@ -374,7 +412,7 @@ dir_is_empty (const struct dir *dir)
   struct dir_entry e;
   off_t ofs;
 
-  for (ofs = 0; /* 0-pos is for parent directory */
+  for (ofs = sizeof e; /* 0-pos is for parent directory */
        inode_read_at (dir->inode, &e, sizeof e, ofs) == sizeof e;
        ofs += sizeof e)
   {

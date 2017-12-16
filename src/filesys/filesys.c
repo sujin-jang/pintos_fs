@@ -50,6 +50,7 @@ filesys_done (void)
 bool
 filesys_create (const char *path, off_t initial_size, bool is_dir) 
 {
+  //printf("filesys create %s\n", path);
   disk_sector_t inode_sector = 0;
   //struct dir *dir = dir_open_root ();
 
@@ -57,6 +58,8 @@ filesys_create (const char *path, off_t initial_size, bool is_dir)
   char directory[ strlen(path) ];
   char file_name[ strlen(path) ];
   split_path_filename(path, directory, file_name);
+  //printf("directory: %s, filename: %s\n", directory, file_name);
+
   struct dir *dir = dir_open_path (directory);
 
   bool success = (dir != NULL
@@ -64,11 +67,17 @@ filesys_create (const char *path, off_t initial_size, bool is_dir)
                   //&& inode_create (inode_sector, initial_size)
                   //&& dir_add (dir, name, inode_sector));
                   && inode_create (inode_sector, initial_size, is_dir)
-                  && dir_add (dir, file_name, inode_sector));
+                  && dir_add (dir, file_name, inode_sector, is_dir));
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
   dir_close (dir);
 
+  if (dir_get_inode (dir)==NULL)
+  {
+    //printf("!!!!!!!! inode is null\n");
+  }
+
+  //printf("filesys create return %d\n", success);
   return success;
 }
 
@@ -81,6 +90,7 @@ struct file *
 filesys_open (const char *name)
 {
   // struct dir *dir = dir_open_root ();
+  //printf("filesys open %s\n", name);
 
   char directory[ strlen(name) ];
   char file_name[ strlen(name) ];
@@ -108,7 +118,10 @@ filesys_open (const char *name)
   }
 
   if (inode == NULL || inode_is_removed (inode))
+  {
+    //printf("filesys open inode null\n");
     return NULL;
+  }
 
   return file_open (inode);
 }
@@ -154,12 +167,18 @@ do_format (void)
 bool
 filesys_chdir (const char *name)
 {
+  //printf("filesys chdir enter %s\n", name);
   struct thread *curr = thread_current();
   struct dir *chdir = dir_open_path (name);
 
-  if(chdir == NULL) return false;
+  if(chdir == NULL)
+  {
+    //printf("filesys chdir NULL\n");
+    return false;
+  }
 
   dir_close (curr->cwd);
   curr->cwd = chdir;
+  //printf("filesys chdir exit\n");
   return true;
 }
