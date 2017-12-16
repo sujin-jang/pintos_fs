@@ -251,17 +251,14 @@ dir_remove (struct dir *dir, const char *name)
   if (inode == NULL)
     goto done;
 
-  if (inode_is_directory (inode))
+  if (inode_isdir (inode))
   {
     struct dir *target = dir_open (inode);
     bool is_empty = dir_is_empty (target);
     dir_close (target);
     if (!is_empty)
     {
-      //printf("empty! return %d\n", success);
-      goto done; // can't delete
-    } else {
-      //printf("not empty!\n");
+      goto done;
     }
   }
 
@@ -302,41 +299,37 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
 struct dir *
 dir_open_path (const char *path)
 {
-  // copy of path, to tokenize
-  int l = strlen(path);
-  char s[l + 1];
-  strlcpy(s, path, l + 1);
+  char *s = malloc(sizeof(char) * (strlen(path) + 1));
+  strlcpy(s, path, strlen(path) + 1);
 
-  // TODO: relative path, cwd
-  //struct dir *curr = dir_open_root();
+  struct thread *t = thread_current();
+  struct inode *inode;
 
-  struct dir *curr;
-  if(path[0] == '/') { // absolute path
+  struct dir *curr, *next;
+
+  if(path[0] == '/') {
     curr = dir_open_root();
-  }
-  else { // relative path
-    struct thread *t = thread_current();
-    if (t->cwd == NULL) // may happen for non-process threads (e.g. main)
+  } else {
+    if (t->cwd == NULL)
       curr = dir_open_root();
-    else {
+    else
       curr = dir_reopen(t->cwd);
-    }
   }
 
-  // tokenize, and traverse the tree
-  char *token, *p;
-  for (token = strtok_r(s, "/", &p); token != NULL;
-       token = strtok_r(NULL, "/", &p))
+  char *token, *save_ptr;
+  for (token = strtok_r(s, "/", &save_ptr); token != NULL;
+       token = strtok_r(NULL, "/", &save_ptr))
   {
-    struct inode *inode = NULL;
-    if(! dir_lookup(curr, token, &inode)) {
+    inode = NULL;
+    if(! dir_lookup(curr, token, &inode))
+    {
       dir_close(curr);
       //printf("dir open path null1\n");
-      return NULL; // such directory not exist
+      return NULL;
     }
-
-    struct dir *next = dir_open(inode);
-    if(next == NULL) {
+    next = dir_open(inode);
+    if(next == NULL)
+    {
       dir_close(curr);
       //printf("dir open path null2\n");
       return NULL;

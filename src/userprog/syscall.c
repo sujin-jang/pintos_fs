@@ -207,7 +207,7 @@ file_add_fdlist (struct file* file)
   desc->file = file;
 
   struct inode *inode = file_get_inode(desc->file);
-  if(inode != NULL && inode_is_directory(inode))
+  if(inode != NULL && inode_isdir(inode))
   {
     desc->dir = dir_open(inode_reopen(inode));
   } else {
@@ -407,7 +407,7 @@ syscall_write (int fd, void *buffer, unsigned size)
     return -1;
   }
 
-  bool is_dir = inode_is_directory (file_get_inode(desc->file));
+  bool is_dir = inode_isdir (file_get_inode(desc->file));
   if (is_dir)
   {
     lock_release(&lock_file);
@@ -518,7 +518,7 @@ syscall_readdir(int fd, char *file)
     return false;
   }
 
-  if(!inode_is_directory(inode))
+  if(!inode_isdir(inode))
   {
     lock_release (&lock_file);
     return false;
@@ -537,7 +537,7 @@ syscall_isdir(int fd)
   lock_acquire (&lock_file);
 
   struct file_descriptor *desc = fd_to_file_descriptor(fd);
-  bool ret = inode_is_directory (file_get_inode(desc->file));
+  bool ret = inode_isdir (file_get_inode(desc->file));
 
   lock_release (&lock_file);
   return ret;

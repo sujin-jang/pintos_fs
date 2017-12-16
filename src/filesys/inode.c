@@ -425,7 +425,7 @@ inode_length (const struct inode *inode)
 }
 
 bool
-inode_is_directory (const struct inode *inode)
+inode_isdir (const struct inode *inode)
 {
   return inode->data.is_dir;
 }

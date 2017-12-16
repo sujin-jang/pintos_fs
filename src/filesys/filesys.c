@@ -96,7 +96,6 @@ filesys_open (const char *name)
     return NULL;
   }
 
-
   struct inode *inode = NULL;
 
   if (strlen(file_name) > 0)
