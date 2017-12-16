@@ -144,7 +144,29 @@ cache_read (disk_sector_t sec_no, void* buffer, int ofs, int size)
   return true;
 }
 
+void
+cache_done (void)
+{
+  if(list_empty(&buffer_cache))
+    return true;
 
+  struct list_elem *e;
+  struct cache_entry *c;
+
+  for (e = list_begin (&buffer_cache); e != list_end (&buffer_cache); e = list_next (e))
+  {
+    c = list_entry (e, struct cache_entry, elem);
+    if (c->dirty)
+    {
+      /* write back */
+      lock_acquire (&disk_lock);
+      disk_write (filesys_disk, c->sec_no, &c->block);
+      lock_release (&disk_lock);
+    }
+  }
+
+  return true;
+}
 
 
 

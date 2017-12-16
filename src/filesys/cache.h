@@ -20,4 +20,6 @@ struct cache_entry * cache_find (disk_sector_t sec_no);
 
 bool cache_write (disk_sector_t sec_no, void* buffer, int ofs, int size);
 bool cache_read (disk_sector_t sec_no, void* buffer, int ofs, int size);
+void cache_done (void);
+
 #endif /* filesys/cache.h */
