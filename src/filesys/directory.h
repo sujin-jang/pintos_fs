@@ -27,7 +27,6 @@ bool dir_add (struct dir *, const char *name, disk_sector_t, bool is_dir);;
 bool dir_remove (struct dir *, const char *name);
 bool dir_readdir (struct dir *, char name[NAME_MAX + 1]);
 
-void split_path_filename(const char *path, char *directory, char *filename);
 struct dir *dir_open_path (const char *);
 bool dir_is_empty (const struct dir *dir);
 

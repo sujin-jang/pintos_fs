@@ -299,58 +299,6 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
   return false;
 }
 
-
-
-
-
-
-
-
-
-void
-split_path_filename(const char *path,
-    char *directory, char *filename)
-{
-  int l = strlen(path);
-  char *s = (char*) malloc( sizeof(char) * (l + 1) );
-  memcpy (s, path, sizeof(char) * (l + 1));
-
-  char *empty = "";
-  if (!strcmp(path, empty))
-  {
-    *directory = "";
-    *filename = "";
-    return;
-  }
-
-  // absolute path handling
-  char *dir = directory;
-  if(l > 0 && path[0] == '/') {
-    if(dir) *dir++ = '/';
-  }
-
-  // tokenize
-  char *token, *p, *last_token = "";
-  for (token = strtok_r(s, "/", &p); token != NULL;
-       token = strtok_r(NULL, "/", &p))
-  {
-    // append last_token into directory
-    int tl = strlen (last_token);
-    if (dir && tl > 0) {
-      memcpy (dir, last_token, sizeof(char) * tl);
-      dir[tl] = '/';
-      dir += tl + 1;
-    }
-
-    last_token = token;
-  }
-
-  if(dir) *dir = '\0';
-  memcpy (filename, last_token, sizeof(char) * (strlen(last_token) + 1));
-  free (s);
-
-}
-
 struct dir *
 dir_open_path (const char *path)
 {

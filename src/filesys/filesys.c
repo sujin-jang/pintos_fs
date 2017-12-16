@@ -15,6 +15,7 @@
 struct disk *filesys_disk;
 
 static void do_format (void);
+static void filename_tokenize(const char *path, char *directory, char *filename);
 
 /* Initializes the file system module.
    If FORMAT is true, reformats the file system. */
@@ -49,24 +50,19 @@ filesys_done (void)
    Fails if a file named NAME already exists,
    or if internal memory allocation fails. */
 bool
-filesys_create (const char *path, off_t initial_size, bool is_dir) 
+filesys_create (const char *name, off_t initial_size, bool is_dir) 
 {
-  //printf("filesys create %s\n", path);
   disk_sector_t inode_sector = 0;
-  //struct dir *dir = dir_open_root ();
 
-  // split path and name
-  char directory[ strlen(path) ];
-  char file_name[ strlen(path) ];
-  split_path_filename(path, directory, file_name);
+  char *directory = malloc(sizeof(char) * strlen(name));
+  char *file_name = malloc(sizeof(char) * strlen(name));
+  filename_tokenize(name, directory, file_name);
   //printf("directory: %s, filename: %s\n", directory, file_name);
 
   struct dir *dir = dir_open_path (directory);
 
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector)
-                  //&& inode_create (inode_sector, initial_size)
-                  //&& dir_add (dir, name, inode_sector));
                   && inode_create (inode_sector, initial_size, is_dir)
                   && dir_add (dir, file_name, inode_sector, is_dir));
   if (!success && inode_sector != 0) 
@@ -85,12 +81,12 @@ filesys_create (const char *path, off_t initial_size, bool is_dir)
 struct file *
 filesys_open (const char *name)
 {
-  // struct dir *dir = dir_open_root ();
+  //struct dir *dir = dir_open_root ();
   //printf("filesys open %s\n", name);
 
-  char directory[ strlen(name) ];
-  char file_name[ strlen(name) ];
-  split_path_filename(name, directory, file_name);
+  char *directory = malloc(sizeof(char) * strlen(name));
+  char *file_name = malloc(sizeof(char) * strlen(name));
+  filename_tokenize(name, directory, file_name);
   //printf("directory: %s, filename: %s\n", directory, file_name);
 
   struct dir *dir = dir_open_path (directory);
@@ -132,9 +128,9 @@ filesys_remove (const char *name)
   //struct dir *dir = dir_open_root ();
   //bool success = dir != NULL && dir_remove (dir, name);
 
-  char directory[ strlen(name) ];
-  char file_name[ strlen(name) ];
-  split_path_filename(name, directory, file_name);
+  char *directory = malloc(sizeof(char) * strlen(name));
+  char *file_name = malloc(sizeof(char) * strlen(name));
+  filename_tokenize(name, directory, file_name);
   struct dir *dir = dir_open_path (directory);
 
   bool success = (dir != NULL && dir_remove (dir, file_name));
@@ -156,7 +152,46 @@ do_format (void)
   printf ("done.\n");
 }
 
+static void
+filename_tokenize(const char *path,
+    char *directory, char *filename)
+{
+  int l = strlen(path);
+  char *s = (char*) malloc( sizeof(char) * (l + 1) );
+  memcpy (s, path, sizeof(char) * (l + 1));
 
+  char *empty = "";
+  if (!strcmp(path, empty))
+  {
+    *directory = "";
+    *filename = "";
+    return;
+  }
+
+  char *dir = directory;
+  if(l > 0 && path[0] == '/') {
+    if(dir) *dir++ = '/';
+  }
+
+  char *token, *p, *last_token = "";
+  for (token = strtok_r(s, "/", &p); token != NULL;
+       token = strtok_r(NULL, "/", &p))
+  {
+    int tl = strlen (last_token);
+    if (dir && tl > 0) {
+      memcpy (dir, last_token, sizeof(char) * tl);
+      dir[tl] = '/';
+      dir += tl + 1;
+    }
+
+    last_token = token;
+  }
+
+  if(dir) *dir = '\0';
+  memcpy (filename, last_token, sizeof(char) * (strlen(last_token) + 1));
+  free (s);
+
+}
 
 /*------------- SYSTEM CALL helper function ----------------*/
 
