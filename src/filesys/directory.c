@@ -234,6 +234,9 @@ bool
 dir_remove (struct dir *dir, const char *name) 
 {
   //printf("dir remove %s\n", name);
+
+  lock_acquire(&dir_lock);
+
   struct dir_entry e;
   struct inode *inode = NULL;
   bool success = false;
@@ -253,13 +256,24 @@ dir_remove (struct dir *dir, const char *name)
 
   if (inode_isdir (inode))
   {
-    struct dir *target = dir_open (inode);
-    bool is_empty = dir_is_empty (target);
-    dir_close (target);
-    if (!is_empty)
+    struct dir *dir_check = dir_open (inode);
+    bool empty = true;
+
+    struct dir_entry iter;
+    off_t ofs_temp;
+
+    for (ofs_temp = sizeof iter; /* 0-pos is for parent directory */
+       inode_read_at (dir_check->inode, &iter, sizeof iter, ofs_temp) == sizeof iter;
+       ofs_temp += sizeof iter)
     {
-      goto done;
+      if (iter.in_use)
+        empty = false;
     }
+
+    dir_close (dir_check);
+
+    if (!empty)
+      goto done;
   }
 
   /* Erase directory entry. */
@@ -273,6 +287,7 @@ dir_remove (struct dir *dir, const char *name)
 
  done:
   inode_close (inode);
+  lock_release(&dir_lock);
   return success;
 }
 
@@ -299,22 +314,25 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
 struct dir *
 dir_open_path (const char *path)
 {
+  struct thread *t = thread_current();
+
+  ASSERT(t != NULL);
+
   char *s = malloc(sizeof(char) * (strlen(path) + 1));
   strlcpy(s, path, strlen(path) + 1);
-
-  struct thread *t = thread_current();
-  struct inode *inode;
 
   struct dir *curr, *next;
 
   if(path[0] == '/') {
     curr = dir_open_root();
+  } else if (t->cwd == NULL) {
+    curr = dir_open_root();
   } else {
-    if (t->cwd == NULL)
-      curr = dir_open_root();
-    else
-      curr = dir_reopen(t->cwd);
+    curr = dir_reopen(t->cwd);
   }
+
+  struct inode *inode;
+  
 
   char *token, *save_ptr;
   for (token = strtok_r(s, "/", &save_ptr); token != NULL;
@@ -345,21 +363,4 @@ dir_open_path (const char *path)
   }
 
   return curr;
-}
-
-bool
-dir_is_empty (const struct dir *dir)
-{
-  struct dir_entry e;
-  off_t ofs;
-
-  for (ofs = sizeof e; /* 0-pos is for parent directory */
-       inode_read_at (dir->inode, &e, sizeof e, ofs) == sizeof e;
-       ofs += sizeof e)
-  {
-    if (e.in_use)
-      return false;
-  }
-
-  return true;
 }
