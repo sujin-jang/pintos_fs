@@ -1,0 +1,12 @@
+FAIL
+Extracted file system contents are not correct.
+abc is missing from the file system.
+
+Actual contents of file system:
+dir-under-file: 51028-byte file
+tar: 56133-byte file
+
+Expected contents of file system:
+abc: 0-byte file
+dir-under-file: 51028-byte file
+tar: 56133-byte file

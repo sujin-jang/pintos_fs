@@ -1,0 +1,14 @@
+FAIL
+Extracted file system contents are not correct.
+1 exists in the file system but it should not.
+2 exists in the file system but it should not.
+
+Actual contents of file system:
+1: directory
+2: directory
+dir-rm-tree: 54985-byte file
+tar: 56133-byte file
+
+Expected contents of file system:
+dir-rm-tree: 54985-byte file
+tar: 56133-byte file

@@ -1,0 +1,44 @@
+Copying tests/vm/page-merge-stk into /tmp/uGGlB3bJIe.dsk...
+Copying tests/vm/child-qsort into /tmp/uGGlB3bJIe.dsk...
+Writing command line to /tmp/xWijaep0zJ.dsk...
+squish-pty bochs -q
+Kernel command line: -q -f put page-merge-stk put child-qsort run page-merge-stk
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  204,600 loops/s.
+hd0:0: detected 1,008 sector (504 kB) disk, model "Generic 1234", serial "BXHD00011"
+hd0:1: detected 4,032 sector (1 MB) disk, model "Generic 1234", serial "BXHD00012"
+hd1:0: detected 1,008 sector (504 kB) disk, model "Generic 1234", serial "BXHD00021"
+hd1:1: detected 8,064 sector (3 MB) disk, model "Generic 1234", serial "BXHD00022"
+Formatting file system...done.
+Boot complete.
+Putting 'page-merge-stk' into the file system...
+Putting 'child-qsort' into the file system...
+Executing 'page-merge-stk':
+(page-merge-stk) begin
+(page-merge-stk) init
+(page-merge-stk) sort chunk 0
+(page-merge-stk) sort chunk 1
+(page-merge-stk) sort chunk 2
+Interrupt 0x0d (#GP General Protection Exception) at eip=0xc010743d
+ cr2=bffdff94 error=00000000
+ eax=ffffffff ebx=c011e40c ecx=c0112750 edx=c0112750
+ esi=c011e40c edi=c0112750 esp=c0112750 ebp=c0143e54
+ cs=0008 ds=0010 es=0010 ss=277c
+Kernel PANIC at ../../userprog/exception.c:101 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc010739c 0xc010a744 0xc01017cd 0xc01018ff 0xc010743d 0xc0108034 0xc01035cd 0xc010d716 0xc010d7de 0xc010ca90 0xc010be57 0xc010b054 0xc01017cd 0xc01018ff 0x804a3b5 0x804811b 0x80489d0.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Kernel PANIC recursion at ../../threads/synch.c:209 in lock_acquire().
+Timer: 19044 ticks
+Thread: 29 idle ticks, 1480 kernel ticks, 17535 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 4639 reads, 1570 writes
+hd1:0: 213 reads, 0 writes
+hd1:1: 2080 reads, 3600 writes
+Console: 1818 characters output
+Keyboard: 0 keys pressed
+Exception: 262 page faults
+Powering off...

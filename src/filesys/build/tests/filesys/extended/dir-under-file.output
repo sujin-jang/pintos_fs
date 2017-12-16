@@ -1,0 +1,32 @@
+Copying tests/filesys/extended/dir-under-file into /tmp/Mb0vxYfrwG.dsk...
+Copying tests/filesys/extended/tar into /tmp/Mb0vxYfrwG.dsk...
+Writing command line to /tmp/7OMoBvdTPr.dsk...
+qemu -hda /tmp/7OMoBvdTPr.dsk -hdb tmp.dsk -hdc /tmp/Mb0vxYfrwG.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put dir-under-file put tar run dir-under-file
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  130,867,200 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 212 sector (106 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Formatting file system...done.
+Boot complete.
+Putting 'dir-under-file' into the file system...
+Putting 'tar' into the file system...
+Executing 'dir-under-file':
+(dir-under-file) begin
+(dir-under-file) create "abc"
+(dir-under-file) mkdir "abc" (must return false)
+(dir-under-file) end
+dir-under-file: exit(0)
+Execution of 'dir-under-file' complete.
+Timer: 61 ticks
+Thread: 30 idle ticks, 30 kernel ticks, 1 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 1304 reads, 403 writes
+hd1:0: 212 reads, 0 writes
+Console: 966 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

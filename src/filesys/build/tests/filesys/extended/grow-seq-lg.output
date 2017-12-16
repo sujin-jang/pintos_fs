@@ -1,0 +1,37 @@
+Copying tests/filesys/extended/grow-seq-lg into /tmp/LOMdQ7UyrT.dsk...
+Copying tests/filesys/extended/tar into /tmp/LOMdQ7UyrT.dsk...
+Writing command line to /tmp/wP3g7YCocm.dsk...
+qemu -hda /tmp/wP3g7YCocm.dsk -hdb tmp.dsk -hdc /tmp/LOMdQ7UyrT.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put grow-seq-lg put tar run grow-seq-lg
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  130,867,200 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 213 sector (106 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Formatting file system...done.
+Boot complete.
+Putting 'grow-seq-lg' into the file system...
+Putting 'tar' into the file system...
+Executing 'grow-seq-lg':
+(grow-seq-lg) begin
+(grow-seq-lg) create "testme"
+(grow-seq-lg) open "testme"
+(grow-seq-lg) writing "testme"
+(grow-seq-lg) close "testme"
+(grow-seq-lg) open "testme" for verification
+(grow-seq-lg) verified contents of "testme"
+(grow-seq-lg) close "testme"
+(grow-seq-lg) end
+grow-seq-lg: exit(0)
+Execution of 'grow-seq-lg' complete.
+Timer: 71 ticks
+Thread: 30 idle ticks, 30 kernel ticks, 11 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 2698 reads, 912 writes
+hd1:0: 213 reads, 0 writes
+Console: 1100 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

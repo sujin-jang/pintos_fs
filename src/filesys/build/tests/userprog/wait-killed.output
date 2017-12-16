@@ -1,0 +1,33 @@
+Copying tests/userprog/wait-killed into /tmp/RNlz9lcey3.dsk...
+Copying tests/userprog/child-bad into /tmp/RNlz9lcey3.dsk...
+Writing command line to /tmp/8x4DTDn2md.dsk...
+qemu -hda /tmp/8x4DTDn2md.dsk -hdb /tmp/HsFrgWviHm.dsk -hdc /tmp/RNlz9lcey3.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put wait-killed put child-bad run wait-killed
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  130,867,200 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 196 sector (98 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Formatting file system...done.
+Boot complete.
+Putting 'wait-killed' into the file system...
+Putting 'child-bad' into the file system...
+Executing 'wait-killed':
+(wait-killed) begin
+(child-bad) begin
+child-bad: exit(-1)
+(wait-killed) wait(exec()) = -1
+(wait-killed) end
+wait-killed: exit(0)
+Execution of 'wait-killed' complete.
+Timer: 61 ticks
+Thread: 30 idle ticks, 29 kernel ticks, 2 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 1243 reads, 387 writes
+hd1:0: 196 reads, 0 writes
+Console: 944 characters output
+Keyboard: 0 keys pressed
+Exception: 1 page faults
+Powering off...

@@ -1,0 +1,27 @@
+Writing command line to /tmp/djqVoA0SFY.dsk...
+qemu -hda /tmp/djqVoA0SFY.dsk -hdb tmp.dsk -hdc /tmp/53kOsatFPT.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q run 'tar fs.tar /' get fs.tar
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  157,081,600 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 2,048 sector (1024 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Boot complete.
+Executing 'tar fs.tar /':
+Kernel PANIC at ../../devices/disk.c:436 in select_sector(): assertion `sec_no < d->capacity' failed.
+Call stack: 0xc01073bc 0xc01046ba 0xc0104a40 0xc010c783 0xc010cb9a 0xc010bc1b 0xc010ac63 0xc01017ed 0xc010191f 0x804a865 0x804842d 0x804854a 0x804869a 0x8048e84.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 68 ticks
+Thread: 30 idle ticks, 22 kernel ticks, 16 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 2500 reads, 1049 writes
+hd1:0: 0 reads, 0 writes
+Console: 1061 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...
+Copying tests/filesys/extended/grow-root-lg.tar out of /tmp/53kOsatFPT.dsk...

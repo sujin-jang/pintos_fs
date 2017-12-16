@@ -1,0 +1,26 @@
+FAIL
+Kernel panic in run: PANIC at ../../userprog/exception.c:101 in kill(): Kernel bug - unexpected interrupt in kernel
+Call stack: 0xc010739c 0xc010a744 0xc01017cd 0xc01018ff 0xc010743d 0xc0108034 0xc01035cd 0xc010d716 0xc010d7de 0xc010ca90 0xc010be57 0xc010b054 0xc01017cd 0xc01018ff 0x804a3b5 0x804811b 0x80489d0
+Translation of call stack:
+In kernel.o:
+0xc010739c: debug_panic (.../../lib/kernel/debug.c:34)
+0xc010a744: kill (.../userprog/exception.c:106)
+0xc01017cd: intr_handler (..../threads/interrupt.c:361)
+0xc01018ff: intr_entry (threads/intr-stubs.S:38)
+0xc010743d: list_remove (.../../lib/kernel/list.c:261)
+0xc0108034: list_pop_front (.../../lib/kernel/list.c:273)
+0xc01035cd: malloc (..../../threads/malloc.c:149)
+0xc010d716: cache_insert (.../../../filesys/cache.c:42)
+0xc010d7de: cache_read (...../../filesys/cache.c:139)
+0xc010ca90: inode_read_at (...../../filesys/inode.c:288)
+0xc010be57: file_read (...d/../../filesys/file.c:72)
+0xc010b054: syscall_read (...../userprog/syscall.c:462)
+0xc01017cd: intr_handler (..../threads/interrupt.c:361)
+0xc01018ff: intr_entry (threads/intr-stubs.S:38)
+In tests/vm/page-merge-stk:
+0x0804a3b5: sdiv64 (..../../lib/arithmetic.c:142)
+0x0804811b: init (...ts/vm/parallel-merge.c:33)
+0x080489d0: check_file_handle (...ild/../../tests/lib.c:144)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.

@@ -1,0 +1,31 @@
+Copying tests/userprog/args-none into /tmp/7zlbQaACCW.dsk...
+Writing command line to /tmp/h6CSGYohDx.dsk...
+qemu -hda /tmp/h6CSGYohDx.dsk -hdb /tmp/S7eFStyXWE.dsk -hdc /tmp/7zlbQaACCW.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put args-none run args-none
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  130,867,200 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 97 sector (48 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Formatting file system...done.
+Boot complete.
+Putting 'args-none' into the file system...
+Executing 'args-none':
+(args) begin
+(args) argc = 1
+(args) argv[0] = 'args-none'
+(args) argv[1] = null
+(args) end
+args-none: exit(0)
+Execution of 'args-none' complete.
+Timer: 57 ticks
+Thread: 30 idle ticks, 26 kernel ticks, 1 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 621 reads, 164 writes
+hd1:0: 97 reads, 0 writes
+Console: 854 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

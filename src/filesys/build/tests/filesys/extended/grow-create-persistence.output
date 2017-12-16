@@ -1,0 +1,25 @@
+Writing command line to /tmp/hVrmFFFvnK.dsk...
+qemu -hda /tmp/hVrmFFFvnK.dsk -hdb tmp.dsk -hdc /tmp/u2xLpvgG4m.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q run 'tar fs.tar /' get fs.tar
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  157,081,600 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 2,048 sector (1024 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Boot complete.
+Executing 'tar fs.tar /':
+tar: exit(0)
+Execution of 'tar fs.tar /' complete.
+Getting 'fs.tar' from the file system...
+Timer: 70 ticks
+Thread: 30 idle ticks, 26 kernel ticks, 14 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 2986 reads, 1081 writes
+hd1:0: 0 reads, 215 writes
+Console: 737 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...
+Copying tests/filesys/extended/grow-create.tar out of /tmp/u2xLpvgG4m.dsk...

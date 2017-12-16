@@ -1,0 +1,12 @@
+FAIL
+Extracted file system contents are not correct.
+blargle is missing from the file system.
+
+Actual contents of file system:
+grow-create: 51141-byte file
+tar: 56133-byte file
+
+Expected contents of file system:
+blargle: 0-byte file
+grow-create: 51141-byte file
+tar: 56133-byte file

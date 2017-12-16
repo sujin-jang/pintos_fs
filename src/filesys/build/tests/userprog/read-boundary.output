@@ -1,0 +1,31 @@
+Copying tests/userprog/read-boundary into /tmp/Ol3V9MXWO0.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/Ol3V9MXWO0.dsk...
+Writing command line to /tmp/MFUeeApGlG.dsk...
+qemu -hda /tmp/MFUeeApGlG.dsk -hdb /tmp/XT8CeHVYes.dsk -hdc /tmp/Ol3V9MXWO0.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put read-boundary put sample.txt run read-boundary
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  157,081,600 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 104 sector (52 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Formatting file system...done.
+Boot complete.
+Putting 'read-boundary' into the file system...
+Putting 'sample.txt' into the file system...
+Executing 'read-boundary':
+(read-boundary) begin
+(read-boundary) open "sample.txt"
+(read-boundary) end
+read-boundary: exit(0)
+Execution of 'read-boundary' complete.
+Timer: 57 ticks
+Thread: 30 idle ticks, 26 kernel ticks, 1 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 727 reads, 181 writes
+hd1:0: 104 reads, 0 writes
+Console: 925 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

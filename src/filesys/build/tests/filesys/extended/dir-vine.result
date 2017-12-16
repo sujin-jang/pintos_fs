@@ -1,0 +1,28 @@
+FAIL
+Kernel panic in run: PANIC at ../../devices/disk.c:436 in select_sector(): assertion `sec_no < d->capacity' failed.
+Call stack: 0xc01073bc 0xc01046ba 0xc0104a40 0xc010ce61 0xc010c22e 0xc010c4e4 0xc010b37e 0xc010ae47 0xc01017ed 0xc010191f 0x804a78a 0x80484e8 0x8048d04 0x8048d38
+Translation of call stack:
+In kernel.o:
+0xc01073bc: debug_panic (.../../lib/kernel/debug.c:34)
+0xc01046ba: select_sector (.../../../devices/disk.c:437)
+0xc0104a40: disk_read (.../../../devices/disk.c:230)
+0xc010ce61: inode_open (...../../filesys/inode.c:190)
+0xc010c22e: dir_lookup (..../filesys/directory.c:136)
+0xc010c4e4: dir_open_path (..../filesys/directory.c:346)
+0xc010b37e: filesys_chdir (.../../filesys/filesys.c:158)
+0xc010ae47: syscall_chdir (...../userprog/syscall.c:467)
+0xc01017ed: intr_handler (..../threads/interrupt.c:361)
+0xc010191f: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/extended/dir-vine:
+0x0804a78a: chdir (...../lib/user/syscall.c:159)
+0x080484e8: test_main (...ys/extended/dir-vine.c:81)
+0x08048d04: main (...ild/../../tests/main.c:13)
+0x08048d38: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.
+
+This assertion commonly fails when accessing a file via an inode that
+has been closed and freed.  Freeing an inode clears all its sector
+indexes to 0xcccccccc, which is not a valid sector number for disks
+smaller than about 1.6 TB.

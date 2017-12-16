@@ -1,0 +1,22 @@
+Writing command line to /tmp/lmpYp6IdXs.dsk...
+qemu -hda /tmp/lmpYp6IdXs.dsk -hdb /tmp/SZbt1zvGFj.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f run open-empty
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  110,796,800 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+Formatting file system...done.
+Boot complete.
+Executing 'open-empty':
+load: open-empty: open failed
+Execution of 'open-empty' complete.
+Timer: 57 ticks
+Thread: 30 idle ticks, 27 kernel ticks, 0 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 47 reads, 8 writes
+Console: 610 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

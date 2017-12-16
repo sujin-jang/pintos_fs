@@ -1,0 +1,12 @@
+FAIL
+Extracted file system contents are not correct.
+foobar is missing from the file system.
+
+Actual contents of file system:
+grow-tell: 51684-byte file
+tar: 56133-byte file
+
+Expected contents of file system:
+foobar: 2134-byte file
+grow-tell: 51684-byte file
+tar: 56133-byte file

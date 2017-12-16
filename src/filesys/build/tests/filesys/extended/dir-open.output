@@ -1,0 +1,34 @@
+Copying tests/filesys/extended/dir-open into /tmp/i9lZ07SdW8.dsk...
+Copying tests/filesys/extended/tar into /tmp/i9lZ07SdW8.dsk...
+Writing command line to /tmp/e9efY8VicI.dsk...
+qemu -hda /tmp/e9efY8VicI.dsk -hdb tmp.dsk -hdc /tmp/i9lZ07SdW8.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put dir-open put tar run dir-open
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  130,867,200 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 213 sector (106 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Formatting file system...done.
+Boot complete.
+Putting 'dir-open' into the file system...
+Putting 'tar' into the file system...
+Executing 'dir-open':
+(dir-open) begin
+(dir-open) mkdir "xyzzy"
+(dir-open) open "xyzzy"
+(dir-open) write "xyzzy"
+(dir-open) write "xyzzy" (must return -1, actually -1)
+(dir-open) end
+dir-open: exit(0)
+Execution of 'dir-open' complete.
+Timer: 62 ticks
+Thread: 30 idle ticks, 31 kernel ticks, 1 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 1304 reads, 403 writes
+hd1:0: 213 reads, 0 writes
+Console: 968 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

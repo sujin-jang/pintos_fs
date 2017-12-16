@@ -1,0 +1,12 @@
+FAIL
+Extracted file system contents are not correct.
+xyzzy is missing from the file system.
+
+Actual contents of file system:
+dir-open: 51298-byte file
+tar: 56133-byte file
+
+Expected contents of file system:
+dir-open: 51298-byte file
+tar: 56133-byte file
+xyzzy: directory
