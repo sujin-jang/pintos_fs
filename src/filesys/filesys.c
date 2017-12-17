@@ -16,6 +16,7 @@ struct disk *filesys_disk;
 
 static void do_format (void);
 static void filename_tokenize(const char *name, char *token_dir, char *token_file);
+static struct dir * dir_open_not_root (const char *path);
 
 /* Initializes the file system module.
    If FORMAT is true, reformats the file system. */
@@ -61,7 +62,7 @@ filesys_create (const char *name, off_t initial_size, bool is_dir)
   filename_tokenize(name, token_dir, token_file);
   //printf("token_dir: %s, filename: %s\n", token_dir, file_name);
 
-  struct dir *dir = dir_open_path (token_dir);
+  struct dir *dir = dir_open_not_root (token_dir);
 
   bool success = (dir != NULL
                   && free_map_allocate (1, &inode_sector)
@@ -91,7 +92,7 @@ filesys_open (const char *name)
   filename_tokenize(name, token_dir, token_file);
   //printf("directory: %s, filename: %s\n", directory, file_name);
 
-  struct dir *dir = dir_open_path (token_dir);
+  struct dir *dir = dir_open_not_root (token_dir);
   struct inode *inode = NULL;
 
   if (dir != NULL)
@@ -129,7 +130,7 @@ filesys_remove (const char *name)
   char *token_file = malloc(sizeof(char) * strlen(name));
   filename_tokenize(name, token_dir, token_file);
 
-  struct dir *dir = dir_open_path (token_dir);
+  struct dir *dir = dir_open_not_root (token_dir);
 
   bool success = dir != NULL && dir_remove (dir, token_file);
   dir_close (dir); 
@@ -189,6 +190,56 @@ filename_tokenize(const char *name, char *token_dir, char *token_file)
   return;
 }
 
+static struct dir *
+dir_open_not_root (const char *path)
+{
+  struct thread *t = thread_current();
+  struct dir *dir;
+  ASSERT(t != NULL && dir != NULL);
+
+  /* Open parent directory: root or cwd */
+
+  if(path[0] == '/' || t->cwd == NULL)
+    dir = dir_open_root();
+  else
+    dir = dir_reopen(t->cwd);
+
+  ASSERT(dir != NULL);
+
+  /* Open directory in path */
+
+  char *s = malloc(sizeof(char) * (strlen(path) + 1));
+  ASSERT(s != NULL);
+  strlcpy(s, path, strlen(path) + 1);
+
+  struct inode *inode;
+  struct dir *dir_iter;
+  char *token, *save_ptr;
+  for (token = strtok_r(s, "/", &save_ptr); token != NULL;
+       token = strtok_r(NULL, "/", &save_ptr))
+  {
+    if(! dir_lookup(dir, token, &inode))
+      goto open_fail;
+
+    if((dir_iter = dir_open(inode)) == NULL)
+      goto open_fail;
+
+    dir_close(dir);
+    dir = dir_iter;
+    inode = NULL;
+  }
+
+  if (inode_is_removed (dir_get_inode(dir)))
+    goto open_fail;
+
+  ASSERT(dir != NULL);
+  return dir;
+
+  open_fail:
+    dir_close(dir);
+    return NULL;
+}
+
 /*------------- SYSTEM CALL helper function ----------------*/
 
 static void cwd_switch (struct dir *dir);
@@ -198,7 +249,7 @@ filesys_chdir (const char *name)
 {
   //printf("filesys chdir enter %s\n", name);
   struct thread *curr = thread_current();
-  struct dir *chdir = dir_open_path (name);
+  struct dir *chdir = dir_open_not_root (name);
 
   if(chdir != NULL)
   {
